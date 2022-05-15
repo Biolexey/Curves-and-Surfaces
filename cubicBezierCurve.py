@@ -53,7 +53,7 @@ class CubicBezierCurve(ParametricCurve): # CubicBezierCurveクラスの定義
     与えられたパラメタ値に対する点の座標値(ワールド座標系)を返す
     """
     if self.mode == 1:                   # 再帰的なモデル
-      return self.recursive(self.n, t)[0]
+      return self.recursive(self.n, t)[0]# n回分の再帰結果を返す
 
     if self.mode == 2:                   # 反復的なモデル
       prepnts = self.points              # 被計算点を格納
@@ -64,16 +64,10 @@ class CubicBezierCurve(ParametricCurve): # CubicBezierCurveクラスの定義
         prepnts = postpnts               # 被計算リストを更新
       return prepnts[0]                  # 最終的な計算結果を返す
 
-
     if self.mode == 3:                   # Bernstein多項式を用いるモデル
       ret = sum([self.bernsteinfunc(self.n, i, t)*self.points[i] for i in range(self.n+1)])
       return ret
-    """
-    return     (1-t)**3     * self.points[0] + \
-           3 * (1-t)**2 * t * self.points[1] + \
-           3 * (1-t) * t**2 * self.points[2] + \
-                       t**3 * self.points[3] # 3次ベジエ曲線上の点を返す
-    """
+
 def main():                              # main関数
   N = 4                                  # 3次ベジエ曲線の制御点数
   if len(sys.argv) > 2*N:                # シェル引数がある場合
