@@ -4,7 +4,10 @@ from cubicBezierCurve import CubicBezierCurve # cubicBezierCurveモジュール�
 
 points = []                              # 制御点のリスト
 pickid = -1                              # ピックされた点の番号
-NP     = 4                               # 3次ベジエ曲線の制御点数
+order = int(input("Input the Bezier Curve's order -> "))#次元数の入力
+NP = order+1                             # n次ベジエ曲線の制御点数
+mode = int(input("Type of calculating(Recursive=1,Iterative=2,Bernstein=3) -> "))
+                                         # 計算モード選択
 
 def norm(v):                             # ベクトルのノルム計算
   '''
@@ -21,9 +24,9 @@ def pressed1(event):                     # Button1 pressed コールバック関
     pickid = -1                          # ピックされた点ではない
     points.append(newpnt)                # プレスで作られた点を制御点として追加
     canvas.drawMarker(newpnt)            # 新しい制御点の描画
-    if len(points) == NP:                # 制御点数が 4個に到達
+    if len(points) == NP:                # 制御点数が n+1個に到達
       canvas.clear()                     # canvasのクリア
-      CubicBezierCurve(canvas, points).drawCurve() # 3次ベジエ曲線の描画
+      CubicBezierCurve(canvas, points, mode).drawCurve() # n次ベジエ曲線の描画
   else:                                  # 制御点数が既に4個で，ピック処理
     pickid, pickdist = (0, norm(newpnt-points[0])) # ピックされた点と距離の初期化
     for i in range(1, len(points)):      # 他の制御点との比較
@@ -38,7 +41,7 @@ def dragged1(event):                     # Button1 dragged コールバック関
   if 0 <= pickid <= NP-1:                # ピックされた点の番号の確認
     points[pickid] = canvas.point(event.x, event.y) # ドラッグされた座標に変更
     canvas.clear()                       # canvasのクリア
-    CubicBezierCurve(canvas, points).drawCurve() # 3次ベジエ曲線の描画
+    CubicBezierCurve(canvas, points, mode).drawCurve() # n次ベジエ曲線の描画
 
 def pressed2(event):                     # Button2 pressed コールバック関数
   global canvas, points                  # 大域変数 canvas, points
