@@ -20,14 +20,14 @@ def norm(v):                             # ベクトルのノルム計算
 def pressed1(event):                     # Button1 pressed コールバック関数
   global canvas, points, pickid          # 大域変数 canvas, points, pickid
   newpnt = canvas.point(event.x, event.y) # プレスされた座標の点を作成
-  if len(points) < NP:                   # 制御点数が 4個に満たない場合
+  if len(points) < NP:                   # 制御点数が NP個に満たない場合
     pickid = -1                          # ピックされた点ではない
     points.append(newpnt)                # プレスで作られた点を制御点として追加
     canvas.drawMarker(newpnt)            # 新しい制御点の描画
     if len(points) == NP:                # 制御点数が n+1個に到達
       canvas.clear()                     # canvasのクリア
       BezierCurve(canvas, points, mode).drawCurve() # n次ベジエ曲線の描画
-  else:                                  # 制御点数が既に4個で，ピック処理
+  else:                                  # 制御点数が既にNP個で，ピック処理
     pickid, pickdist = (0, norm(newpnt-points[0])) # ピックされた点と距離の初期化
     for i in range(1, len(points)):      # 他の制御点との比較
       dist = norm(newpnt-points[i])      # 制御点との距離

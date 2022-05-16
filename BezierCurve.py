@@ -65,4 +65,4 @@ class BezierCurve(ParametricCurve): # BezierCurveクラスの定義
 
     if self.mode == 3:                   # Bernstein多項式を用いるモデル
       ret = sum([self.bernsteinfunc(self.n, i, t)*self.points[i] for i in range(self.n+1)])
-      return ret
+      return ret 
