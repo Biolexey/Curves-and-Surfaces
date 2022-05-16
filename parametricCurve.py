@@ -26,7 +26,7 @@ class ParametricCurve(object):           # ParametricCurveクラスの定義
         self.canvas.drawPolyline([prevPnt, currPnt]) # 線分を表示する
       prevPnt, prevIn = (currPnt, currIn) # 次の点を現在の点にする
 
-  def drawBernstein(self, I,  ts = 0, te = 0, offset = np.array((0, 0)), nop = 128):
+  def drawBernstein(self, I,  ts = 0, te = 0, offset = np.array((0, 0)), nop = 512):
                                          # ParametricCurveオブジェクトの描画メソッド
     '''
     ts, te - 描画対象のパラメタ値 (開始,終了)，省略時 0, 0

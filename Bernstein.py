@@ -19,24 +19,25 @@ class DrawBernstein(ParametricCurve):
     def draw(self, ts = 0, te = 1):
         for i in range(self.n):
             super().drawBernstein(i, ts, te)
-            print(i)
+        super().drawBernstein(0, ts, te)
 
-    def bernsteinfunc(self, n, i, t):      # Bernstein多項式の計算
+    def bernsteinfunc(self, n, i, t):    # Bernstein多項式の計算
         """
         Bernstein多項式にパラメータtを代入した値を返す
         """
         return combination(n, i) * t**i * (1-t)**(n-i)
 
-    def evaluate(self, i, t):                 # 曲線上の点座標計算メソッド
+    def evaluate(self, i, t):            # 曲線上の点座標計算メソッド
         """
         t - パラメタ値
         与えられたパラメタ値に対する点の座標値(ワールド座標系)を返す
         """
-        return self.bernsteinfunc(self.n, i, t)
+        #print([t, self.bernsteinfunc(self.n-1, i, t)])
+        return [t, self.bernsteinfunc(self.n-1, i, t)]
 
 def main():                              # main関数
   global canvas                          # 大域変数 canvas
-  canvas = MyCanvas()                    # canvasの作成
+  canvas = MyCanvas(xo=0,yo=600,r=1)     # canvasの作成
   DrawBernstein(canvas, NP).draw()
   canvas.mainloop()                      # ルートフレームの実行ループ開始
 
