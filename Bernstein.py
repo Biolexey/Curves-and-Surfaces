@@ -36,6 +36,7 @@ class DrawBernstein(ParametricCurve):    # Bernstein多項式描画クラス
 def main():                              # main関数
   global canvas                          # 大域変数 canvas
   canvas = MyCanvas(xo=0,yo=600,r=1)     # canvasの作成(offsetと拡大率は指定)
+  canvas.clear()
   DrawBernstein(canvas, order).draw()    # Bernstein描画クラス内のdrawメソッド呼び出し
   canvas.mainloop()                      # ルートフレームの実行ループ開始
 
