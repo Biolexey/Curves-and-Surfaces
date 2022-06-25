@@ -3,7 +3,7 @@ import numpy as np
 
 global K
 order = int(input("Input the order of B-spline function -> "))#次元数の入力
-knot = [0, 1, 1, 3, 4, 5, 6]
+knot = [0, 1, 1.000000001,2,  3, 4, 5, 6]
 #knot = list(map(int, input().split()))   # knotの入力
 K = len(knot)
 
