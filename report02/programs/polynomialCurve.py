@@ -4,7 +4,7 @@ from myCanvas import MyCanvas            # myCanvasモジュールのimport
 from parametricCurve import ParametricCurve # parametricCurveモジュールのimport
 
 class PolynomialCurve(ParametricCurve):  # PolynomialCurveクラスの定義
-  def __init__(self, canvas, points, order, seg, knots):    # 初期化メソッド
+  def __init__(self, canvas, points, order, seg, knots, mode):    # 初期化メソッド
     '''
     canvas - 描画するcanvas
     points - 制御点のリスト (またはタプル)
@@ -16,6 +16,7 @@ class PolynomialCurve(ParametricCurve):  # PolynomialCurveクラスの定義
     self.order = order
     self.seg = seg
     self.knots = knots
+    self.mode = mode
 
   def drawPolygon(self):                 # 制御多角形の描画メソッド
     '''
@@ -32,9 +33,13 @@ class PolynomialCurve(ParametricCurve):  # PolynomialCurveクラスの定義
     多項式曲線と制御多角形を描画する
     '''
     self.drawPolygon()                   # 制御多角形の描画
-    if self.seg >= 1:                    # segmentが1個以上あれば
-      for k in range(self.seg):          # segmentの数だけ分割して描画
-        super().drawCurve(self.knots[k+self.order-1], self.knots[k+self.order], k)     # 曲線の描画
+    if self.mode == 0:                     # B-splineの時
+      if self.seg >= 1:                    # segmentが1個以上あれば
+        for k in range(self.seg):          # segmentの数だけ分割して描画
+          super().drawCurve(self.knots[k+self.order-1], self.knots[k+self.order], k)# 曲線の描画
+      
+    if self.mode == 1:
+      super().BasisdrawCurve(self.knots[0], self.knots[-1])
 
 
 def PCMain(PCClass, offset=0):           # PCMain関数

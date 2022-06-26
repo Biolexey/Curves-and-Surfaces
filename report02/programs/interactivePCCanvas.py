@@ -10,7 +10,7 @@ def norm(v):                             # ベクトルのノルム計算
   return np.dot(v, v)**0.5               # 内積計算して平方根
 
 class InteractivePCCanvas(MyCanvas):     # InteractivePCCanvasクラスの定義
-  def __init__(self, pCurve, order):            # 初期化メソッド
+  def __init__(self, pCurve, order, mode):            # 初期化メソッド
     '''
     pCurve - 描画に用いる多項式曲線のクラス
     InteractiveBSCanvasオブジェクトを初期化する
@@ -28,6 +28,7 @@ class InteractivePCCanvas(MyCanvas):     # InteractivePCCanvasクラスの定義
     self.num = 0                         # つぎのノットの数字
     self.seg = 0                         # segmentの数
     self.order = order                   # 次元数
+    self.mode = mode                     # 描画モード(0: B-spline, 1: Lagrange)
     #self.bind('<Button-3>', self.pressed3) # Button3 pressed コールバックメソッド
     print('<Usage>')                     # 利用法の表示
     print('Button-1: Add a new control point') # 制御点の追加
@@ -42,20 +43,19 @@ class InteractivePCCanvas(MyCanvas):     # InteractivePCCanvasクラスの定義
     newpnt = self.point(event.x, event.y) # プレスされた座標の点を作成
     self.pickid = -1                     # ピックされた点ではない
     self.points.append(newpnt)           # プレスで作られた点を制御点として追加
-    if self.num == 0:
+    
+    if self.num == 0:                    # 最初の点の時にはノットを次元数分だけ追加し、numをorderで初期化
       self.knots = [i for i in range(self.order)]
       self.num = self.order
-    else:
+    else:                                # それ以外は順次ノットを追加していく
       self.knots.append(self.num)
       self.num += 1
     
-    if len(self.points)-1 >= self.order:
+    if len(self.points)-1 >= self.order: # 十分な点の数に達したらsegmentがあると判断
       self.seg += 1
     
     self.clear()                         # canvasのクリア
-    #if self.seg >= 1:
-    #print(self.order, self.knots, self.seg)
-    self.pCurve(self, self.points, self.order, self.seg, self.knots).drawCurve(ts=self.knots[0], te=self.knots[-1]) # 多項式曲線の描画
+    self.pCurve(self, self.points, self.order, self.seg, self.knots, self.mode).drawCurve(ts=self.knots[0], te=self.knots[-1]) # 多項式曲線の描画
 
   def pressed2(self, event):             # Button2 pressed コールバックメソッド
     '''
@@ -81,7 +81,7 @@ class InteractivePCCanvas(MyCanvas):     # InteractivePCCanvasクラスの定義
       self.points[self.pickid] = self.point(event.x, event.y)
                                          # ドラッグされた座標に変更
       self.clear()                       # canvasのクリア
-      self.pCurve(self, self.points, self.order, self.seg, self.knots).drawCurve(ts=self.knots[0], te=self.knots[-1]) # 多項式曲線の描画
+      self.pCurve(self, self.points, self.order, self.seg, self.knots, self.mode).drawCurve(ts=self.knots[0], te=self.knots[-1]) # 多項式曲線の描画
   
   def pressed3(self, event):             # Button3 pressed コールバックメソッド
     '''

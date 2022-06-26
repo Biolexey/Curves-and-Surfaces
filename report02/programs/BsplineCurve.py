@@ -1,10 +1,8 @@
-import sys
-from cv2 import detail_BlocksCompensator                               # sysモジュールのimport
-import numpy as np
-from pandas import describe_option                       # numpyモジュールのimport (npで)
+import sys                               # sysモジュールのimport
+import numpy as np                       # numpyモジュールのimport (npで)
 from polynomialCurve import PolynomialCurve
                                          # polynomialCurveモジュールのimport
-from basis import N2
+from basis import N
 
 class BsplineCurve(PolynomialCurve):     # クラスの定義
   def drawCurve(self, ts = 0, te = 1):   # Bsplineオブジェクトの描画メソッド
@@ -14,12 +12,12 @@ class BsplineCurve(PolynomialCurve):     # クラスの定義
     '''
     super().drawCurve(ts, te)            # ここではとりあえず描画する。上位クラスで場合分け。
 
-class BsplinedeBoor(BsplineCurve):
+class BsplinedeBoor(BsplineCurve):       # de Boorアルゴリズムによる描画
   def evaluate(self, t, j):   
     
     return self.deboor(self.knots, self.order, j+self.order-1, t)
 
-  def deboor(self, knot, r, i, t):
+  def deboor(self, knot, r, i, t):       # de Boorの再帰的定義
     if r == 0:
       return self.points[i+1]
     else:
@@ -30,5 +28,5 @@ class Bsplinebasis(BsplineCurve):        # Basis関数による描画メソッ�
   def evaluate(self, t, j):   
     ret = 0
     for k in range(self.order+1):
-        ret += self.points[j+k]*N2(self.order, self.knots, j+k-1, t)
+        ret += self.points[j+k]*N(self.order, self.knots, j+k-1, t)
     return ret
