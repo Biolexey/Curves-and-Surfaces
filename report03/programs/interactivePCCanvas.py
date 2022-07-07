@@ -10,7 +10,7 @@ def norm(v):                             # ベクトルのノルム計算
   return np.dot(v, v)**0.5               # 内積計算して平方根
 
 class InteractivePCCanvas(MyCanvas):     # InteractivePCCanvasクラスの定義
-  def __init__(self, pCurve, order):            # 初期化メソッド
+  def __init__(self, pCurve, order, mode):            # 初期化メソッド
     '''
     pCurve - 描画に用いる多項式曲線のクラス
     InteractiveBSCanvasオブジェクトを初期化する
@@ -28,6 +28,7 @@ class InteractivePCCanvas(MyCanvas):     # InteractivePCCanvasクラスの定義
                                       # Shift+Button1 pressed コールバックメソッド
     self.num = 0                         # つぎのノットの数字
     self.order = order                   # 次元数
+    self.mode = mode                     # 再分割の手法
     #self.bind('<Button-3>', self.pressed3) # Button3 pressed コールバックメソッド
     print('<Usage>')                     # 利用法の表示
     print('Button-1: Add a new control point') # 制御点の追加
@@ -90,36 +91,54 @@ class InteractivePCCanvas(MyCanvas):     # InteractivePCCanvasクラスの定義
   
   def pressed3(self, event):             # Button3 pressed コールバックメソッド
     newpoints = []
-    if self.order == 1:
-      for i in range(len(self.points)-1):
-        newpoints.append(self.points[i])
-        newpoints.append(0.5*self.points[i] + 0.5*self.points[i+1])
-        self.knots.append(self.num)
-        self.num += 1
-      newpoints.append(newpoints[0])
-      self.points = newpoints            # 点を更新
+    if self.mode == 0:                   # 普通の再分割
+      if self.order == 1:
+        for i in range(len(self.points)-1):
+          newpoints.append(self.points[i])
+          newpoints.append(0.5*self.points[i] + 0.5*self.points[i+1])
+          self.knots.append(self.num)
+          self.num += 1
+        newpoints.append(newpoints[0])
+        self.points = newpoints            # 点を更新
+        
+      elif self.order == 2:
+        for i in range(len(self.points)-1):
+          newpoints.append(3*self.points[i]/4 + self.points[i+1]/4)
+          newpoints.append(self.points[i]/4 + 3*self.points[i+1]/4)
+          self.knots.append(self.num)
+          self.num += 1
+        newpoints.append(newpoints[0])
+        self.points = newpoints            # 点を更新
       
-    elif self.order == 2:
+      else:
+        for i in range(len(self.points)-1):
+          if i == 0:
+            newpoints.append(self.points[-2]/8 + 6*self.points[i]/8 + self.points[i+1]/8)
+            newpoints.append(self.points[i]/2 + self.points[i+1]/2)
+          else:
+            newpoints.append(self.points[i-1]/8 + 6*self.points[i]/8 + self.points[i+1]/8)
+            newpoints.append(self.points[i]/2 + self.points[i+1]/2)
+          self.knots.append(self.num)
+          self.num += 1
+        newpoints.append(newpoints[0])
+        self.points = newpoints            # 点を更新
+
+    else:                                  # 4点スキーマ
       for i in range(len(self.points)-1):
-        newpoints.append(3*self.points[i]/4 + self.points[i+1]/4)
-        newpoints.append(self.points[i]/4 + 3*self.points[i+1]/4)
-        self.knots.append(self.num)
-        self.num += 1
+          if i == 0:
+            newpoints.append(self.points[i])
+            newpoints.append(-self.points[-2]/16 + 9*self.points[i]/16 + 9*self.points[i+1]/16 + -self.points[i+2]/16)
+          elif i == len(self.points)-2:
+            newpoints.append(self.points[i])
+            newpoints.append(-self.points[i-1]/16 + 9*self.points[i]/16 + 9*self.points[i+1]/16 + -self.points[1]/16)
+          else:
+            newpoints.append(self.points[i])
+            newpoints.append(-self.points[i-1]/16 + 9*self.points[i]/16 + 9*self.points[i+1]/16 + -self.points[i+2]/16)
+          self.knots.append(self.num)
+          self.num += 1
       newpoints.append(newpoints[0])
       self.points = newpoints            # 点を更新
-    
-    else:
-      for i in range(len(self.points)-1):
-        if i == 0:
-          newpoints.append(self.points[-2]/8 + 6*self.points[i]/8 + self.points[i+1]/8)
-          newpoints.append(self.points[i]/2 + self.points[i+1]/2)
-        else:
-          newpoints.append(self.points[i-1]/8 + 6*self.points[i]/8 + self.points[i+1]/8)
-          newpoints.append(self.points[i]/2 + self.points[i+1]/2)
-        self.knots.append(self.num)
-        self.num += 1
-      newpoints.append(newpoints[0])
-      self.points = newpoints            # 点を更新
+
     
     self.clear()                         # canvasのクリア
     self.pCurve(self, self.points, self.order, self.knots).drawCurve(ts=self.knots[0], te=self.knots[-1]) # 多項式曲線の描画
