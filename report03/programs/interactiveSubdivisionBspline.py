@@ -1,7 +1,7 @@
 import sys                               # sysモジュールのimport
 from interactivePCCanvas import InteractivePCCanvas
                                          # interactivePCCanvasモジュールのimport
-from BsplineCurve import BsplinedeBoor, Bsplinebasis, SubdivisionBspline
+from BsplineCurve import SubdivisionBspline
 
 def main():                              # main関数
   if len(sys.argv) > 1:                  # シェル引数がある場合
